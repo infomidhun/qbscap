@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:qbscap/Components/QBActButton.dart';
-import 'package:qbscap/Components/QBRecentProjects.dart';
-import 'package:qbscap/Components/QBRecentScans.dart';
+import 'package:qbscap/Forms/QBResult.dart';
+import 'package:qbscap/Forms/QBScanner.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:qbscap/Components/QBSearchBox.dart';
-import 'package:qbscap/Forms/QBRScanner.dart';
+import 'package:qbscap/Components/QBActButton.dart';
+import 'package:qbscap/Components/QBRecentScans.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:qbscap/Components/QBRecentProjects.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -29,6 +31,27 @@ class _HomeState extends State<Home> {
           statusBarColor: Colors.transparent));
   }
 
+  void _scanQB() async {
+    _sysUIOverlay(bNormal: false);
+    var result = await Navigator.of(_globalKey.currentContext)
+        .push(MaterialPageRoute(builder: (_) => QBScanner()));
+    _sysUIOverlay(bNormal: true);
+    if (!(result is Barcode)) return;
+    Barcode barcode = result;
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (_) => QBResult(
+              format: barcode.format.formatName,
+              data: barcode.code,
+            )));
+  }
+
+  void _importQB() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    if (pickedFile == null) return;
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => QBResult()));
+  }
+
   @override
   void initState() {
     _searchText = "Search recent scans...";
@@ -37,15 +60,7 @@ class _HomeState extends State<Home> {
           icon: Icons.qr_code_scanner_outlined,
           text: "Scan QR\nBarcode",
           backgroundColor: const Color(0XFF5EA7CC),
-          onTap: () async {
-            _sysUIOverlay(bNormal: false);
-            var result = await Navigator.of(_globalKey.currentContext)
-                .push(MaterialPageRoute(builder: (_) => QBRScanner()));
-            _sysUIOverlay(bNormal: true);
-            if (!(result is Barcode)) return;
-            Barcode barcode = result;
-            print(barcode.format);
-          }),
+          onTap: () => _scanQB()),
       QBActButtonItems(
           icon: Icons.edit_outlined,
           text: "Create QR\nBarcode",
@@ -57,7 +72,8 @@ class _HomeState extends State<Home> {
       QBActButtonItems(
           icon: Icons.photo_outlined,
           text: "Scan QR/Barcode\nFrom gallery",
-          backgroundColor: const Color(0xFFE63E3E))
+          backgroundColor: const Color(0xFFE63E3E),
+          onTap: () => _importQB())
     ];
     super.initState();
   }

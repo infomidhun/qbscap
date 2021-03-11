@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:qbscap/colors.dart';
+import 'package:vibration/vibration.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
-class QBRScanner extends StatefulWidget {
+class QBScanner extends StatefulWidget {
   @override
-  _QBRScannerState createState() => _QBRScannerState();
+  _QBScannerState createState() => _QBScannerState();
 }
 
-class _QBRScannerState extends State<QBRScanner> {
+class _QBScannerState extends State<QBScanner> {
   QRViewController _controller;
   bool _cameraPause;
   final GlobalKey _key = GlobalKey(debugLabel: 'QR');
@@ -34,7 +36,7 @@ class _QBRScannerState extends State<QBRScanner> {
   Widget build(BuildContext context) {
     var scanArea = (MediaQuery.of(context).size.width < 400 ||
             MediaQuery.of(context).size.height < 400)
-        ? 250.0
+        ? 200.0
         : 300.0;
 
     return Material(
@@ -56,6 +58,10 @@ class _QBRScannerState extends State<QBRScanner> {
                 });
                 _controller.scannedDataStream.listen((scanData) {
                   _controller.dispose();
+                  () async {
+                    if (await Vibration.hasVibrator())
+                      Vibration.vibrate(duration: 300);
+                  }();
                   Navigator.pop(context, scanData);
                 });
               },
@@ -68,17 +74,22 @@ class _QBRScannerState extends State<QBRScanner> {
               children: [
                 IconButton(
                     splashRadius: 24,
-                    icon: const Icon(Icons.flip_camera_ios_outlined),
+                    icon: const Icon(
+                      Icons.flip_camera_ios_outlined,
+                      color: COLOR_GRAY,
+                    ),
                     onPressed: () async => _controller?.flipCamera()),
                 IconButton(
                     splashRadius: 24,
-                    icon: const Icon(Icons.flash_on_rounded),
+                    icon: const Icon(Icons.flash_on_rounded, color: COLOR_GRAY),
                     onPressed: () async => _controller?.toggleFlash()),
                 IconButton(
                     splashRadius: 24,
-                    icon: Icon(_cameraPause
-                        ? Icons.qr_code_scanner_rounded
-                        : Icons.pause),
+                    icon: Icon(
+                        _cameraPause
+                            ? Icons.qr_code_scanner_rounded
+                            : Icons.pause,
+                        color: COLOR_GRAY),
                     onPressed: () async {
                       _cameraPause
                           ? _controller.resumeCamera()
@@ -89,7 +100,7 @@ class _QBRScannerState extends State<QBRScanner> {
                     }),
                 IconButton(
                     splashRadius: 24,
-                    icon: Icon(Icons.close),
+                    icon: Icon(Icons.close, color: COLOR_GRAY),
                     onPressed: () {
                       _controller.dispose();
                       Navigator.pop(context, null);
