@@ -8,6 +8,7 @@ import 'package:qbscap/Components/QBActButton.dart';
 import 'package:qbscap/Components/QBRecentScans.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:qbscap/Components/QBRecentProjects.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -32,6 +33,15 @@ class _HomeState extends State<Home> {
   }
 
   void _scanQB() async {
+    var status = await Permission.camera.status;
+    if (!status.isGranted) {
+      if (!await Permission.camera.request().isGranted) return;
+    }
+    status = await Permission.microphone.status;
+    if (!status.isGranted) {
+      if (!await Permission.microphone.request().isGranted) return;
+    }
+
     _sysUIOverlay(bNormal: false);
     var result = await Navigator.of(_globalKey.currentContext)
         .push(MaterialPageRoute(builder: (_) => QBScanner()));
@@ -46,6 +56,11 @@ class _HomeState extends State<Home> {
   }
 
   void _importQB() async {
+    var status = await Permission.mediaLibrary.status;
+    if (!status.isGranted) {
+      if (!await Permission.mediaLibrary.request().isGranted) return;
+    }
+
     final picker = ImagePicker();
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
     if (pickedFile == null) return;

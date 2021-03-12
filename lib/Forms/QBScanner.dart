@@ -12,14 +12,14 @@ class _QBScannerState extends State<QBScanner> {
   QRViewController _controller;
   bool _cameraPause;
   final GlobalKey _key = GlobalKey(debugLabel: 'QR');
-
-  /* @override
+/*
+  @override
   void reassemble() {
     super.reassemble();
     if (Platform.isAndroid) _controller.pauseCamera();
     _controller.resumeCamera();
-  }*/
-
+  }
+*/
   @override
   void dispose() {
     _controller?.dispose();
@@ -36,7 +36,7 @@ class _QBScannerState extends State<QBScanner> {
   Widget build(BuildContext context) {
     var scanArea = (MediaQuery.of(context).size.width < 400 ||
             MediaQuery.of(context).size.height < 400)
-        ? 200.0
+        ? 250.0
         : 300.0;
 
     return Material(
@@ -47,9 +47,9 @@ class _QBScannerState extends State<QBScanner> {
             child: QRView(
               key: _key,
               overlay: QrScannerOverlayShape(
-                  borderColor: Colors.orange,
+                  borderColor: Colors.lime,
                   borderRadius: 4,
-                  borderLength: 22,
+                  borderLength: 18,
                   borderWidth: 4,
                   cutOutSize: scanArea),
               onQRViewCreated: (controller) {
