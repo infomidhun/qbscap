@@ -20,6 +20,11 @@ class QBActButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double _width =
+        (MediaQuery.of(context).size.width - ((this.items.length - 1)) * 8);
+    double _cxgap = (_width / this.items.length);
+    _cxgap = _cxgap < 153 ? 153 : _cxgap;
+
     return SizedBox(
         height: 90,
         width: double.infinity,
@@ -38,7 +43,7 @@ class QBActButton extends StatelessWidget {
                     bottomLeft: const Radius.circular(4));
 
               return SizedBox(
-                width: 153,
+                width: _cxgap,
                 child: ClipRRect(
                   borderRadius: _borderRadius,
                   child: Material(

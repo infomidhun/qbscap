@@ -1,5 +1,5 @@
+import 'package:qbscap/env.dart';
 import 'package:flutter/material.dart';
-import 'package:qbscap/colors.dart';
 
 class QBSearchBox extends StatelessWidget {
   final String text;
@@ -21,7 +21,9 @@ class QBSearchBox extends StatelessWidget {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(36),
           child: Material(
-            color: COLOR_GRAY,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.black54
+                : COLOR_GRAY,
             child: InkWell(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -30,9 +32,16 @@ class QBSearchBox extends StatelessWidget {
                   children: [
                     Text(
                       this.text,
-                      style: TextStyle(color: Colors.black54, fontSize: 15),
+                      style: TextStyle(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white54
+                              : Colors.black54,
+                          fontSize: 15),
                     ),
-                    const Icon(Icons.search, color: Colors.black54)
+                    Icon(Icons.search,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white54
+                            : Colors.black54)
                   ],
                 ),
               ),

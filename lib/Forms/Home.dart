@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:qbscap/env.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:qbscap/Forms/QBResult.dart';
 import 'package:qbscap/Forms/QBScanner.dart';
 import 'package:image_picker/image_picker.dart';
@@ -20,6 +22,8 @@ class _HomeState extends State<Home> {
   String _searchText;
   List<QBActButtonItems> _qbaButtons;
 
+  History _history;
+
   void _sysUIOverlay({bool bNormal = true}) {
     if (bNormal)
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
@@ -37,22 +41,19 @@ class _HomeState extends State<Home> {
     if (!status.isGranted) {
       if (!await Permission.camera.request().isGranted) return;
     }
-    status = await Permission.microphone.status;
-    if (!status.isGranted) {
-      if (!await Permission.microphone.request().isGranted) return;
-    }
-
     _sysUIOverlay(bNormal: false);
     var result = await Navigator.of(_globalKey.currentContext)
         .push(MaterialPageRoute(builder: (_) => QBScanner()));
     _sysUIOverlay(bNormal: true);
     if (!(result is Barcode)) return;
+
     Barcode barcode = result;
     Navigator.of(context).push(MaterialPageRoute(
         builder: (_) => QBResult(
               format: barcode.format.formatName,
               data: barcode.code,
             )));
+    _history.addScan([barcode.code, barcode.format.formatName]);
   }
 
   void _importQB() async {
@@ -101,6 +102,11 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     ///
+    ///
+    ///
+    _history = context.watch<History>();
+
+    ///
     /// Update device status bar color
     ///
     _sysUIOverlay(bNormal: true);
@@ -138,7 +144,9 @@ class _HomeState extends State<Home> {
               ///
               ///
               ///
-              QBRecentScans(),
+              QBRecentScans(
+                defFunc: _scanQB,
+              )
             ],
           ),
         ),

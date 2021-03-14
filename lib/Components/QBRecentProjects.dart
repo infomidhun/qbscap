@@ -49,12 +49,15 @@ class QBRecentProjects extends StatelessWidget {
                   "Total created projects (10)",
                   style: const TextStyle(fontSize: 14, color: Colors.grey),
                 ),
-                const Text(
-                  "View All",
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
-                      color: Colors.blue),
+                GestureDetector(
+                  onTap: () {},
+                  child: const Text(
+                    "View All",
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                        color: Colors.blue),
+                  ),
                 ),
               ],
             ),

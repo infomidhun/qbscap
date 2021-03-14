@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:path/path.dart';
 import 'package:share/share.dart';
-import 'package:qbscap/colors.dart';
+import 'package:qbscap/env.dart';
 import 'package:barcode/barcode.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,47 +15,6 @@ import 'package:barcode_image/barcode_image.dart';
 class QBResult extends StatelessWidget {
   final String format, data;
   const QBResult({Key key, this.format, this.data}) : super(key: key);
-
-  Barcode _getResult() {
-    switch (this.format) {
-      case 'AZTEC':
-        return Barcode.aztec();
-      case 'CODABAR':
-        return Barcode.codabar();
-      case 'CODE_39':
-        return Barcode.code39();
-      case 'CODE_93':
-        return Barcode.code93();
-      case 'CODE_128':
-        return Barcode.code128();
-      case 'DATA_MATRIX':
-        return Barcode.dataMatrix();
-      case 'EAN_8':
-        return Barcode.ean8();
-      case 'EAN_13':
-        return Barcode.ean13();
-      case 'ITF':
-        return Barcode.itf();
-      case 'MAXICODE':
-        return Barcode.dataMatrix();
-      case 'PDF_417':
-        return Barcode.pdf417();
-      case 'QR_CODE':
-        return Barcode.qrCode();
-      case 'RSS14':
-        return Barcode.rm4scc();
-      case 'RSS_EXPANDED':
-        return Barcode.rm4scc();
-      case 'UPC_A':
-        return Barcode.upcA();
-      case 'UPC_E':
-        return Barcode.upcE();
-      case 'UPC_EAN_EXTENSION':
-        return Barcode.upcE();
-      default:
-        return null;
-    }
-  }
 
   String _toSVG(Barcode bcode) {
     return bcode.toSvg(this.data,
@@ -103,7 +62,8 @@ class QBResult extends StatelessWidget {
                     decoration: BoxDecoration(
                         color: COLOR_GRAY.withOpacity(0.54),
                         borderRadius: BorderRadius.circular(4)),
-                    child: SvgPicture.string(_toSVG(_getResult()))),
+                    child: SvgPicture.string(
+                        _toSVG(barcodeFromString(this.format)))),
                 SizedBox(
                   height: 10,
                 ),
@@ -169,8 +129,8 @@ class QBResult extends StatelessWidget {
                           onPressed: () async {
                             final _dir = await getTemporaryDirectory();
                             final _path = (join(_dir.path, 'QB Scap.pdf'));
-                            final _bcode = _getResult();
-                            final _svg = _toSVG(_getResult());
+                            final _bcode = barcodeFromString(this.format);
+                            final _svg = _toSVG(barcodeFromString(this.format));
                             final _ind = '<svg viewBox="';
                             final _pos = _svg.indexOf(_ind);
                             final _pex = _svg
@@ -214,12 +174,13 @@ class QBResult extends StatelessWidget {
                             final _dir = await getExternalStorageDirectory();
                             final _path = (join(_dir.path,
                                 "${DateTime.now().millisecondsSinceEpoch}"));
-                            final _bcode = _getResult();
+                            final _bcode = barcodeFromString(this.format);
 
                             switch (value) {
                               case 'pdf':
                                 {
-                                  final _svg = _toSVG(_getResult());
+                                  final _svg =
+                                      _toSVG(barcodeFromString(this.format));
                                   final _ind = '<svg viewBox="';
                                   final _pos = _svg.indexOf(_ind);
                                   final _pex = _svg
@@ -294,7 +255,8 @@ class QBResult extends StatelessWidget {
                                   final svg =
                                       '<?xml version="1.0" encoding="utf-8"?>\n' +
                                           '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n' +
-                                          _toSVG(_getResult());
+                                          _toSVG(
+                                              barcodeFromString(this.format));
                                   await File("$_path.svg").writeAsString(svg);
                                   ScaffoldMessenger.of(context)
                                       .hideCurrentSnackBar();

@@ -4,20 +4,27 @@ class QBBlankItem extends StatelessWidget {
   final IconData icon;
   final MaterialColor color;
   final String text;
+  final Function onPress;
   const QBBlankItem({
     Key key,
     this.icon,
     this.text,
     this.color,
+    this.onPress,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Material(
       borderRadius: BorderRadius.circular(4),
-      color: this.color.shade50,
+      color: Theme.of(context).brightness == Brightness.dark
+          ? Colors.black54
+          : this.color.shade50,
       child: InkWell(
-        onTap: () {},
+        splashColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.black54
+            : Theme.of(context).splashColor,
+        onTap: () => this.onPress(),
         borderRadius: BorderRadius.circular(4),
         child: Center(
           child: Column(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:qbscap/colors.dart';
+import 'package:qbscap/env.dart';
 import 'package:vibration/vibration.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
@@ -40,7 +40,7 @@ class _QBScannerState extends State<QBScanner> {
         : 300.0;
 
     return Material(
-      color: Colors.transparent,
+      color: Colors.black,
       child: Column(
         children: [
           Expanded(
